@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  my-template-api:
+    build: .
+    container_name: my-template-api
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/app
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: my-template-mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+
+  adminer:
+    image: adminer
+    container_name: my-template-adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  redis:
+    image: redis
+    container_name: my-template-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge
